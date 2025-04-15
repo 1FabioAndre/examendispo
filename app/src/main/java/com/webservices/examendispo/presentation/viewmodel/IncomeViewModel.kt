@@ -33,4 +33,12 @@ class IncomeViewModel(private val repository: IncomeRepository) : ViewModel() {
             repository.getAllIncome()
         }
     }
+
+    // Nuevo método para obtener el total de los ingresos
+    suspend fun getTotalIncomes(): Double {
+        return withContext(Dispatchers.IO) {
+            val incomes = repository.getAllIncome()
+            incomes.sumOf { it.price }  // Sumar los precios de todos los ingresos
+        }
+    }
 }

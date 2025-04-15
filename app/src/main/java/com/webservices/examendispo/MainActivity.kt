@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                                 )
                         }
                         composable("registerExpense") {
-                            RegisterExpenseScreen(viewModel = viewModelExpense)
+                            RegisterExpenseScreen(viewModel = viewModelExpense, viewModelIncome = viewModelIncome)
                         }
                         composable("listExpenses") {
                             ExpenseListScreen(viewModel = viewModelExpense)

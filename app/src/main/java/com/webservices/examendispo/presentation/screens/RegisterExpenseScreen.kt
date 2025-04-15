@@ -38,12 +38,143 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.webservices.examendispo.data.entities.ExpenseEntity
 import com.webservices.examendispo.presentation.viewmodel.ExpenseViewModel
+import com.webservices.examendispo.presentation.viewmodel.IncomeViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+import com.webservices.examendispo.util.Util
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun RegisterExpenseScreen(viewModel: ExpenseViewModel) {
+//    val context = LocalContext.current
+//    val coroutineScope = rememberCoroutineScope()
+//
+//    var name by remember { mutableStateOf(TextFieldValue("")) }
+//    var price by remember { mutableStateOf(TextFieldValue("")) }
+//    var description by remember { mutableStateOf(TextFieldValue("")) }
+//
+//    val expenses = remember { mutableStateListOf<ExpenseEntity>() }
+//
+//    LaunchedEffect(Unit) {
+//        expenses.addAll(viewModel.getAllExpenses())
+//    }
+//
+//    Scaffold(
+//        topBar = {
+//            TopAppBar(title = { Text("Registro de Gastos") })
+//        }
+//    ) { innerPadding ->
+//        Column(
+//            modifier = Modifier
+//                .padding(innerPadding)
+//                .padding(16.dp)
+//                .fillMaxSize()
+//        ) {
+//            OutlinedTextField(
+//                value = name,
+//                onValueChange = { name = it },
+//                label = { Text("Nombre") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            OutlinedTextField(
+//                value = price,
+//                onValueChange = { price = it },
+//                label = { Text("Precio") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            OutlinedTextField(
+//                value = description,
+//                onValueChange = { description = it },
+//                label = { Text("Descripción") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Button(
+//                onClick = {
+//                    val priceValue = price.text.toDoubleOrNull()
+//                    if (priceValue != null && name.text.isNotBlank()) {
+//                        coroutineScope.launch {
+//                            viewModel.addExpense(
+//                                name = name.text,
+//                                price = priceValue,
+//                                description = description.text,
+//                                date = System.currentTimeMillis()
+//                            )
+//                            Toast.makeText(context, "Gasto registrado", Toast.LENGTH_SHORT).show()
+//
+//                            expenses.clear()
+//                            expenses.addAll(viewModel.getAllExpenses())
+//
+//                            name = TextFieldValue("")
+//                            price = TextFieldValue("")
+//                            description = TextFieldValue("")
+//
+//                            Util.sendNotificatión(context)
+//                        }
+//                    } else {
+//                        Toast.makeText(context, "Faltan datos", Toast.LENGTH_SHORT).show()
+//                    }
+//                },
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                Text("Registrar Gasto")
+//            }
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            LazyColumn {
+//                items(expenses) { expense ->
+//                    Card(
+//                        modifier = Modifier
+//                            .padding(8.dp)
+//                            .fillMaxWidth()
+//                    ) {
+//                        Row(
+//                            modifier = Modifier.padding(8.dp),
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.SpaceBetween
+//                        ) {
+//                            Column {
+//                                Text("Nombre: ${expense.name}")
+//                                Text("Precio: ${expense.price}")
+//                                Text("Descripción: ${expense.description}")
+//                                Text(
+//                                    "Fecha: ${
+//                                        SimpleDateFormat(
+//                                            "dd/MM/yyyy HH:mm",
+//                                            Locale.getDefault()
+//                                        ).format(Date(expense.date))
+//                                    }"
+//                                )
+//                            }
+//                            IconButton(onClick = {
+//                                coroutineScope.launch {
+//                                    viewModel.deleteExpense(expense)
+//                                    Toast.makeText(context, "Gasto eliminado", Toast.LENGTH_SHORT)
+//                                        .show()
+//                                    expenses.clear()
+//                                    expenses.addAll(viewModel.getAllExpenses())
+//                                }
+//                            }) {
+//                                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterExpenseScreen(viewModel: ExpenseViewModel) {
+fun RegisterExpenseScreen(viewModel: ExpenseViewModel, viewModelIncome: IncomeViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -97,6 +228,7 @@ fun RegisterExpenseScreen(viewModel: ExpenseViewModel) {
                     val priceValue = price.text.toDoubleOrNull()
                     if (priceValue != null && name.text.isNotBlank()) {
                         coroutineScope.launch {
+                            // Registrar el gasto
                             viewModel.addExpense(
                                 name = name.text,
                                 price = priceValue,
@@ -105,9 +237,18 @@ fun RegisterExpenseScreen(viewModel: ExpenseViewModel) {
                             )
                             Toast.makeText(context, "Gasto registrado", Toast.LENGTH_SHORT).show()
 
+                            // Verificar si hay ingresos para respaldar el gasto
+                            val totalIngresos = viewModelIncome.getTotalIncomes()  // Suponiendo que tienes un método para obtener los ingresos
+
+                            if (priceValue > totalIngresos) {
+                                // Si el gasto supera los ingresos, enviar notificación
+                                Util.sendNotificatión(context)
+                            }
+
                             expenses.clear()
                             expenses.addAll(viewModel.getAllExpenses())
 
+                            // Limpiar campos después de registrar el gasto
                             name = TextFieldValue("")
                             price = TextFieldValue("")
                             description = TextFieldValue("")
