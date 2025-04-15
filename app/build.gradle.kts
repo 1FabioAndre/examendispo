@@ -49,6 +49,10 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
+    // navegacion
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

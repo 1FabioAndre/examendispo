@@ -42,9 +42,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
-fun ExpenseScreen(viewModel: ExpenseViewModel) {
+fun RegisterExpenseScreen(viewModel: ExpenseViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
